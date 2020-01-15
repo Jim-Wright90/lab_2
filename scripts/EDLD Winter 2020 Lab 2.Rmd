@@ -22,10 +22,109 @@ library(here)
 library(rio)
 ``` 
 
-```{r load data, include = F}
 
-alcohol <- rio::import("https://github.com/fivethirtyeight/data/raw/master/alcohol-consumption/drinks.csv")
+# load data 
+```{r load data, include = FALSE}
+
+alcohol <- rio::import("https://github.com/fivethirtyeight/data/raw/master/alcohol-consumption/drinks.csv", 
+                        setclass = "tbl_df")
 
 head(alcohol)
 
+
 ``` 
+
+
+# data exploration histograms 
+```{r plots, include=FALSE}
+
+ggplot(alcohol, aes(beer_servings)) +
+  geom_histogram(fill = "#56B4E9",
+                 color = "white",
+                 alpha = 0.9) +
+  ggtitle("Bins = 30")
+
+ggplot(alcohol, aes(beer_servings)) +
+  geom_histogram(fill = "#56B4E9",
+                 color = "white",
+                 alpha = 0.9,
+                 bins = 50) +
+  ggtitle("bins = 50")
+
+ggplot(alcohol, aes(beer_servings)) +
+  geom_histogram(fill = "#56B4E9",
+                 color = "white",
+                 alpha = 0.9,
+                 bins = 5) +
+  ggtitle("Bins = 5")
+
+ggplot(alcohol, aes(beer_servings)) +
+  geom_histogram(fill = "#56B4E9",
+                 color = "white",
+                 alpha = 0.9,
+                 bins = 25) +
+  ggtitle("Bins = 25") +
+  labs(x = "Beer Servings")
+```
+
+Jim: I believe the histogram of beer consumption with bins set at 25 is the superior option because the distribution is very positively skewed, so it provides a more clear explanation of how the lower end of the distribution varies. 
+
+# data exploration density plots
+```{r density plots, include=FALSE}
+head(alcohol)
+
+ggplot(alcohol, aes(wine_servings)) +
+  geom_density()
+
+ggplot(alcohol, aes(wine_servings)) +
+  geom_density(fill = "#56B4E9",
+               bw = 5) +
+  ggtitle("BW = 5") +
+  labs(x = "Wine Servings")
+
+ggplot(alcohol, aes(wine_servings)) +
+  geom_density(fill = "#56B4E9",
+               bw = 0.5) +
+  ggtitle("BW = 0.5") +
+  labs(x = "Wine Servings")
+
+ggplot(alcohol, aes(wine_servings)) +
+  geom_density(fill = "#56B4E9",
+               bw = 2) +
+  ggtitle("BW = 2") +
+  labs(x = "Wine Servings")
+
+ggplot(alcohol, aes(wine_servings)) +
+  geom_density(fill = "#56B4E9",
+               bw = 10) +
+  ggtitle("BW = 10") +
+  labs(x = "Wine Servings")
+
+ggplot(alcohol, aes(wine_servings)) +
+  geom_density(fill = "#56B4E9",
+               bw = 15) +
+  ggtitle("BW = 15") +
+  labs(x = "Wine Servings")
+
+ggplot(alcohol, aes(wine_servings)) +
+  geom_density(fill = "#56B4E9",
+               bw = 20) +
+  ggtitle("BW = 20") +
+  labs(x = "Wine Servings")
+
+```
+
+Jim: I believe having a larger binwidth (10 - 20) is preferrable for the density plots because it more clearly displays the concentration of wine consumption at lower servings. Similar to beer consumption, wine consumption is skewed positivley, so I think it is better to provide a more clear display of where the largest display of consumption is occuring. 
+
+# Data Reorganization 
+```{r data reorganized, include=FALSE}
+head(alcohol)
+
+alcohol %>% 
+  pivot_longer(beer_servings:wine_servings,
+               names_to = "type",
+               values_to = "servings")
+               
+
+```
+
