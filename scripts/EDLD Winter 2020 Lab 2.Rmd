@@ -35,7 +35,7 @@ head(alcohol)
 ``` 
 
 
-# data exploration histograms 
+# Data Exploration Histograms 
 ```{r plots, include=FALSE}
 
 ggplot(alcohol, aes(beer_servings)) +
@@ -69,7 +69,7 @@ ggplot(alcohol, aes(beer_servings)) +
 
 Jim: I believe the histogram of beer consumption with bins set at 25 is the superior option because the distribution is very positively skewed, so it provides a more clear explanation of how the lower end of the distribution varies. 
 
-# data exploration density plots
+# Data Exploration Density Plots
 ```{r density plots, include=FALSE}
 head(alcohol)
 
@@ -120,11 +120,36 @@ Jim: I believe having a larger binwidth (10 - 20) is preferrable for the density
 ```{r data reorganized, include=FALSE}
 head(alcohol)
 
-alcohol %>% 
+alcohol_pivot <- alcohol %>% 
   pivot_longer(beer_servings:wine_servings,
                names_to = "type",
                values_to = "servings")
-               
+
+
+ggplot(alcohol_pivot, aes(servings)) +
+  geom_histogram(fill = "#A9E5C5",
+                 color = "white",
+                 alpha = 0.9,
+                 bins = 5) +
+  facet_wrap(~type)
+
+
+ggplot(alcohol_pivot, aes(servings)) +
+  geom_density(aes(fill = type),
+               color = "white",
+               alpha = 0.3,
+               bw = 50) 
+
+ggplot(alcohol_pivot, aes(servings, type)) +
+  ggridges::geom_density_ridges(color = "white",
+                                fill = "#A9E5C5")
 
 ```
 
+Jim: All three plots suggest the distribution of alcohol consumption is positively skewed across all three types of alcohol: beer, spirts, and wine. At the lowest level of servings consumed, wine is the most often consumed type of alcohol, while at higher consumption rates, beer appears to be the drink of choice. 
+
+# Reproduced Plot
+```{r reproduced plot, include=FALSE}
+
+
+```
