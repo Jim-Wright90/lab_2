@@ -23,7 +23,6 @@ library(rio)
 ``` 
 
 
-# load data 
 ```{r load data, include = FALSE}
 
 alcohol <- rio::import("https://github.com/fivethirtyeight/data/raw/master/alcohol-consumption/drinks.csv", 
@@ -36,7 +35,7 @@ head(alcohol)
 
 
 # Data Exploration Histograms 
-```{r plots, include=FALSE}
+```{r plots, include=TRUE}
 
 ggplot(alcohol, aes(beer_servings)) +
   geom_histogram(fill = "#56B4E9",
@@ -70,7 +69,7 @@ ggplot(alcohol, aes(beer_servings)) +
 Jim: I believe the histogram of beer consumption with bins set at 25 is the superior option because the distribution is very positively skewed, so it provides a more clear explanation of how the lower end of the distribution varies. 
 
 # Data Exploration Density Plots
-```{r density plots, include=FALSE}
+```{r density plots, include=TRUE}
 head(alcohol)
 
 ggplot(alcohol, aes(wine_servings)) +
@@ -117,7 +116,7 @@ ggplot(alcohol, aes(wine_servings)) +
 Jim: I believe having a larger binwidth (10 - 20) is preferrable for the density plots because it more clearly displays the concentration of wine consumption at lower servings. Similar to beer consumption, wine consumption is skewed positivley, so I think it is better to provide a more clear display of where the largest display of consumption is occuring. 
 
 # Data Reorganization 
-```{r data reorganized, include=FALSE}
+```{r data reorganized, include=TRUE}
 head(alcohol)
 
 alcohol_pivot <- alcohol %>% 
@@ -149,7 +148,35 @@ ggplot(alcohol_pivot, aes(servings, type)) +
 Jim: All three plots suggest the distribution of alcohol consumption is positively skewed across all three types of alcohol: beer, spirts, and wine. At the lowest level of servings consumed, wine is the most often consumed type of alcohol, while at higher consumption rates, beer appears to be the drink of choice. 
 
 # Reproduced Plot
-```{r reproduced plot, include=FALSE}
+```{r reproduced plot, include=TRUE}
+
+?str_to_title
+
+alcohol_pivot %>% 
+  mutate(type = stringr::str_to_title(type)) %>% 
+  arrange(desc(total_litres_of_pure_alcohol)) %>% 
+  slice(1:(25*3)) %>% 
+  ggplot(aes(country, servings)) +
+  geom_col(fill = "#56B4E9", 
+           alpha = 0.5) +
+  coord_flip() +
+  labs(x = "Country",
+       y = "Proportion of total alcohol consumed",
+       title = "Alcohol consumption by type",
+       subtitle = "Top 25 countries displayed (according to total liters consumed")
 
 
+alcohol_pivot %>% 
+  mutate(type = stringr::str_to_title(type)) %>% 
+  arrange(desc(total_litres_of_pure_alcohol)) %>% 
+  slice(1:(25*3)) %>% 
+  ggplot(aes(country, servings)) +
+  geom_col(fill = "#56B4E9",
+           alpha = 0.5) +
+  coord_flip() +
+  facet_wrap(~type) +
+  labs(x = "Country",
+       y = "Proportion of total alcohol consumed",
+       title = "Alcohol consumption by type",
+       subtitle = "Top 25 countries displayed (according to total liters consumed")
 ```
