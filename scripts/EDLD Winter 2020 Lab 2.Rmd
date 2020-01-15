@@ -1,0 +1,31 @@
+---
+title: "EDLD Winter 2020 Lab 2"
+author: "Jim Wright; Claire Zhang"
+date: "1/15/2020"
+output: html_document
+toc: true
+toc_float: true
+theme: united 
+highlight: zenburn 
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(message = FALSE,
+                      warning = FALSE,
+                      echo = FALSE,
+                      fig.width = 10,
+                      fig.height = 10,
+                      dev.args = list(bg="transparent"))
+
+library(tidyverse)
+library(here)
+library(rio)
+``` 
+
+```{r load data, include = F}
+
+alcohol <- rio::import("https://github.com/fivethirtyeight/data/raw/master/alcohol-consumption/drinks.csv")
+
+head(alcohol)
+
+``` 
