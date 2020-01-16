@@ -116,13 +116,13 @@ ggplot(alcohol, aes(wine_servings)) +
 
 Jim: I believe having a larger binwidth (10 - 20) is preferrable for the density plots because it more clearly displays the concentration of wine consumption at lower servings. Similar to beer consumption, wine consumption is skewed positivley, so I think it is better to provide a more clear display of where the largest display of consumption is occuring. 
 
-## Explore the overall distribution of total alcohol consumed
+## Assignment 1: explore the overall distribution of total alcohol consumed
+
 1. Histogram
 a. Play with the number of bins 
 b. Settle on a number of bins and provide a brief justification in text
 
 Claire: I noticed that the question is about total alcohol consumded so I thought maybe just focus on this column. And firstly I want to investigate the total alcohol consumption by countries but I can only use geom_col instead of geom_histogram since I have two variables. Still, it was a fun exploration, see graph "Top 20 Countries in Alcohol Consumption" below.
-
 ```{r, top 20 countries in alcohol consumption, include=TRUE}
 c <- alcohol %>% 
   rename(total = total_litres_of_pure_alcohol) %>% 
@@ -137,6 +137,7 @@ ggplot(c, aes(country, total)) +
   theme_minimal(base_size = 15)+
   labs(y = "Total Alcohol Consumption", x = "Top 20 Countries", title = "Top 20 Countries in Alcohol Consumption")
 ```
+
 Then I set out to explore the geom_histogram. I played with the bins setting several times and found that if I set bins to 25, the graph looks nice as the scale of alcohol consumption is 0-15. However, as y-axis represents "count", I don't actually know how to interpret the graph except that total consumption seems to be lower in most countries and only a few countries have a total consumption at 10-15.
 ```{r}
 ggplot(alcohol, aes(total_litres_of_pure_alcohol)) +
@@ -144,23 +145,30 @@ ggplot(alcohol, aes(total_litres_of_pure_alcohol)) +
   theme_minimal(base_size = 15)+
   labs(x = "Total Alcohol Consumption", title = "Total Alcohol Consumption Counts")
 ```
+
 2. Density plot
 a. compare the default bandwidth with a few other selections entered manually.
 b. settle on a bandwidth selection, and justify why briefly in text.
+
 Claire: the default bandwidth gave me a density plot as below and it's ugly (default bw = "nrd0"). 
 ```{r}
-ggplot(c, aes(total)) +
-  geom_density()
+ggplot(alcohol, aes(total_litres_of_pure_alcohol)) +
+  geom_density()+
 ```
-Then I tried to change some selections and played with different binwidths but with the bw getting bigger, more details get lost due to the smoothing, even I set bw = 1, I'm not seeing it telling us correct info about the counts of total alcohol: 
+
+Then I tried to change some selections and played with different binwidths but with the bw getting bigger, more details get lost due to the smoothing, even I only set bw = 5, I'm not seeing it telling us correct info about the counts of total alcohol: 
 ```{r}
-ggplot(c, aes(total)) +
-  geom_density(fill = "#56B4E9", bw = 1)
+ggplot(alcohol, aes(total_litres_of_pure_alcohol)) +
+  geom_density(fill = "#56B4E9", bw = 5, color = "white", alpha = 0.9)+
+  theme_minimal(base_size = 15)
 ```
-So I set bw = 0.1.
+
+So I finally set bw at 0.1 since it tells me more details and allows me to see the highly different alcohol consumptions all over the world.
 ```{r}
-ggplot(c, aes(total)) +
-  geom_density(fill = "#56B4E9", bw = 0.1)
+ggplot(alcohol, aes(total_litres_of_pure_alcohol)) +
+  geom_density(fill = "#56B4E9", bw = 0.1, color = "white", alpha = 0.9)+
+  theme_minimal(base_size = 15)+
+  labs(x = "Total Alcohol Liters Consumed in Each Country", y = "Counts", title = "193 Countries Total Alcohol Liters Counts")
 ```
 
 # Data Reorganization 
@@ -241,3 +249,43 @@ alcohol_pivot %>%
        title = "Alcohol consumption by type",
        subtitle = "Top 25 countries displayed (according to total liters consumed")
 ```
+
+## Assignment 2: reorganize the data so you have a type and servings column.
+
+1. Evaluate the distribution of servings by type using at least three different methods. Provide a brief substantive conclusion.
+
+Claire: the first evaluation below is to explore my first question - which has the largest consumption in all these 193 countries, wine, spirit, or beer? The plot indicates that overall, people in these countries like beer the most and wine the least, although the mean differences are not statistically significant. 
+```{r}
+d <- alcohol %>% 
+  rename(total = total_litres_of_pure_alcohol, wine = wine_servings, spirit = spirit_servings, beer = beer_servings)%>% 
+  pivot_longer(beer:wine, names_to = "type", values_to = "servings") 
+d %>% 
+  ggplot(aes(type, servings))+
+  geom_boxplot(fill = "#56B4E9", alpha = 0.9, width = 0.5)+
+  theme_minimal(base_size = 15)+
+  labs(x = "Alcohol Types", y = "Average Consumption", title = "Average Consumption of Wine, Spirit, and Beer in 193 Countries")
+```
+
+Claire: my second question is in the countries with lager alcohol consumption (pure alcohol liters >= 10), what are people's favorite, wine, spirit, or beer? The plot below indicates that beer is still the most welcomed, but wine is consumed more than spirit in average. The mean differences are still not statistically significant though.
+```{r}
+e <- d %>% 
+  arrange(desc(total)) %>% 
+  filter(total >= 10)
+e %>% 
+  ggplot(aes(type, servings))+
+  geom_boxplot(fill = "#56B4E9", alpha = 0.9, width = 0.5)+
+  theme_minimal(base_size = 15)+
+  labs(x = "Alcohol Types", y = "Average Consumption", title = "Average Consumption of Wine, Spirit, and Beer in Countries \n with More Than 10 Liters Pure Alcohol Consumption")
+```
+
+Claire: my third question is for each of the countries with lager alcohol consumption (pure alcohol liters >= 10), what is their favorite, wine, spirit, or beer? The plots below are interesting and informative, showing me, as a wine lover, countries with more wine lovers such as Andorra, Croatia, Denmark, France, Portugal, and Switzerland. What's your favorite? 
+```{r, countries having alcohol consumed more than 10 liters}
+e %>%
+  ggplot(aes(type, servings, fill = type))+
+  geom_col()+
+  theme_minimal()+
+  facet_wrap(~country)
+```
+
+2. Reproduce plot
+Claire: this is really really hard.
