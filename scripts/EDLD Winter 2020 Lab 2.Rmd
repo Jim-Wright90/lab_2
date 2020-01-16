@@ -121,7 +121,7 @@ Jim: I believe having a larger binwidth (10 - 20) is preferrable for the density
 a. Play with the number of bins 
 b. Settle on a number of bins and provide a brief justification in text
 
-Claire: firstly I want to investigate the total alcohol consumption by countries but I can only use geom_col as I have two columns. Still, it was a fun exploration, see graph "Top 20 Countries in Alcohol Consumption" below.
+Claire: I noticed that the question is about total alcohol consumded so I thought maybe just focus on this column. And firstly I want to investigate the total alcohol consumption by countries but I can only use geom_col instead of geom_histogram since I have two variables. Still, it was a fun exploration, see graph "Top 20 Countries in Alcohol Consumption" below.
 
 ```{r, top 20 countries in alcohol consumption, include=TRUE}
 c <- alcohol %>% 
@@ -137,14 +137,31 @@ ggplot(c, aes(country, total)) +
   theme_minimal(base_size = 15)+
   labs(y = "Total Alcohol Consumption", x = "Top 20 Countries", title = "Top 20 Countries in Alcohol Consumption")
 ```
-Then I set out to explore the geom_histogram. I played with the bins setting several times and found that if I set bins to 25, the graph looks nice as the scale of alcohol consumption is 0-15. However, as y-axis represents "count", I don't actually know how to interpret the graph.
+Then I set out to explore the geom_histogram. I played with the bins setting several times and found that if I set bins to 25, the graph looks nice as the scale of alcohol consumption is 0-15. However, as y-axis represents "count", I don't actually know how to interpret the graph except that total consumption seems to be lower in most countries and only a few countries have a total consumption at 10-15.
 ```{r}
 ggplot(alcohol, aes(total_litres_of_pure_alcohol)) +
   geom_histogram(fill = "#56B4E9", color = "white", alpha = 0.9, bins = 25)+
   theme_minimal(base_size = 15)+
   labs(x = "Total Alcohol Consumption", title = "Total Alcohol Consumption Counts")
 ```
-
+2. Density plot
+a. compare the default bandwidth with a few other selections entered manually.
+b. settle on a bandwidth selection, and justify why briefly in text.
+Claire: the default bandwidth gave me a density plot as below and it's ugly (default bw = "nrd0"). 
+```{r}
+ggplot(c, aes(total)) +
+  geom_density()
+```
+Then I tried to change some selections and played with different binwidths but with the bw getting bigger, more details get lost due to the smoothing, even I set bw = 1, I'm not seeing it telling us correct info about the counts of total alcohol: 
+```{r}
+ggplot(c, aes(total)) +
+  geom_density(fill = "#56B4E9", bw = 1)
+```
+So I set bw = 0.1.
+```{r}
+ggplot(c, aes(total)) +
+  geom_density(fill = "#56B4E9", bw = 0.1)
+```
 
 # Data Reorganization 
 ```{r data reorganized, include=TRUE}
