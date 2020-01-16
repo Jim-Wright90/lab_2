@@ -165,6 +165,19 @@ alcohol_pivot %>%
        title = "Alcohol consumption by type",
        subtitle = "Top 25 countries displayed (according to total liters consumed")
 
+alcohol_pivot %>% 
+  mutate(type = stringr::str_to_title(type)) %>% 
+  arrange(desc(total_litres_of_pure_alcohol)) %>% 
+  slice(1:(25*3)) %>% 
+  ggplot(aes(country, fill = total_litres_of_pure_alcohol)) +
+  geom_bar(position = "fill", 
+           alpha = 0.5) +
+  coord_flip() +
+  labs(x = "Country",
+       y = "Proportion of total alcohol consumed",
+       title = "Alcohol consumption by type",
+       subtitle = "Top 25 countries displayed (according to total liters consumed")
+
 
 alcohol_pivot %>% 
   mutate(type = stringr::str_to_title(type)) %>% 
