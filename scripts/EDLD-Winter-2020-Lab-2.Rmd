@@ -18,15 +18,16 @@ knitr::opts_chunk$set(message = FALSE,
                       dev.args = list(bg="transparent"))
 
 library(tidyverse)
-library(here)
+#library(here)# shouldn't need this for this lab
 library(rio)
 ``` 
 
 
 ```{r load data, include = FALSE}
+# No need to namespace since you loaded rio above
+alcohol <- import("https://github.com/fivethirtyeight/data/raw/master/alcohol-consumption/drinks.csv", 
+                  setclass = "tbl_df")
 
-alcohol <- rio::import("https://github.com/fivethirtyeight/data/raw/master/alcohol-consumption/drinks.csv", 
-                        setclass = "tbl_df")
 
 head(alcohol)
 
@@ -37,7 +38,6 @@ head(alcohol)
 # Data Exploration Histograms 
 
 ```{r plots, include=TRUE}
-
 ggplot(alcohol, aes(beer_servings)) +
   geom_histogram(fill = "#56B4E9",
                  color = "white",
@@ -68,6 +68,8 @@ ggplot(alcohol, aes(beer_servings)) +
 ```
 
 Jim: I believe the histogram of beer consumption with bins set at 25 is the superior option because the distribution is very positively skewed, so it provides a more clear explanation of how the lower end of the distribution varies. 
+
+**DA:** I like it. I'd actually have gone even slightly lower, like maybe 15.
 
 # Data Exploration Density Plots
 ```{r density plots, include=TRUE}
@@ -116,6 +118,8 @@ ggplot(alcohol, aes(wine_servings)) +
 
 Jim: I believe having a larger binwidth (10 - 20) is preferrable for the density plots because it more clearly displays the concentration of wine consumption at lower servings. Similar to beer consumption, wine consumption is skewed positivley, so I think it is better to provide a more clear display of where the largest display of consumption is occuring. 
 
+**DA:** So you're actually looking at the wrong thing here. You're supposed to viewing total alcohol liters, but you're looking at wine servings. That said, I think the binwidth is too high. The data are too smoothed and become obscured. 
+
 ## Assignment 1: explore the overall distribution of total alcohol consumed
 
 1. Histogram
@@ -137,6 +141,8 @@ ggplot(c, aes(country, total)) +
   theme_minimal(base_size = 15)+
   labs(y = "Total Alcohol Consumption", x = "Top 20 Countries", title = "Top 20 Countries in Alcohol Consumption")
 ```
+
+**DA:** This is a fine plot but does not get at the distribution of total alcohol consumption.
 
 Claire: Then I set out to explore the geom_histogram. I played with the bins setting several times and found that if I set bins to 25, the graph looks nice as the scale of alcohol consumption is 0-15. However, as y-axis represents "count", I don't actually know how to interpret the graph except that total consumption seems to be lower in most countries and only a few countries have a total consumption at 10-15.
 ```{r}
@@ -171,6 +177,8 @@ ggplot(alcohol, aes(total_litres_of_pure_alcohol)) +
   labs(x = "Total Alcohol Liters Consumed in Each Country", y = "Counts", title = "193 Countries Total Alcohol Liters Counts")
 ```
 
+**DA** I think these plots have too large and too small of binwidths. I woul go for something in-between, like 0.5.
+
 # Data Reorganization 
 ```{r data reorganized, include=TRUE}
 head(alcohol)
@@ -201,12 +209,14 @@ ggplot(alcohol_pivot, aes(servings, type)) +
 
 ```
 
+**DA**: Nice job. I like these.
+
 Jim: All three plots suggest the distribution of alcohol consumption is positively skewed across all three types of alcohol: beer, spirts, and wine. At the lowest level of servings consumed, wine is the most often consumed type of alcohol, while at higher consumption rates, beer appears to be the drink of choice. 
 
 # Reproduced Plot
 ```{r reproduced plot, include=TRUE}
 
-?str_to_title
+?str_to_title # Remove these sorts of things before submitting
 
 alcohol_pivot %>% 
   mutate(type = stringr::str_to_title(type)) %>% 
@@ -275,17 +285,26 @@ e %>%
   ggplot(aes(type, servings))+
   geom_boxplot(fill = "#56B4E9", alpha = 0.9, width = 0.5)+
   theme_minimal(base_size = 15)+
-  labs(x = "Alcohol Types", y = "Average Consumption", title = "Average Consumption of Wine, Spirit, and Beer in Countries \n with More Than 10 Liters Pure Alcohol Consumption")
+  labs(x = "Alcohol Types", 
+       y = "Average Consumption", 
+       title = "Average Consumption of Wine, Spirit, and Beer in Countries \n with More Than 10 Liters Pure Alcohol Consumption")
+
+# DA: Careful on your code styling
 ```
 
 Claire: My third question is for each of the countries with lager alcohol consumption (pure alcohol liters >= 10), what is their favorite, wine, spirit, or beer? The plots below are interesting and informative, showing me, as a wine lover, countries with more wine lovers such as Andorra, Croatia, Denmark, France, Portugal, and Switzerland. What's your favorite? 
+
+**DA**: Great that you're exploring, but be sure to answer the questions of the lab, not just those that you are interested in.
+
 ```{r, countries having alcohol consumed more than 10 liters}
 e %>%
   ggplot(aes(type, servings, fill = type))+
   geom_col(alpha = 0.9, width = 1, color = "white")+
   theme_minimal()+
   facet_wrap(~country, ncol = 9)+
-  labs(x = "Alcohol Types", y = "Average Consumption", title = "What Is Their Favorite?")
+  labs(x = "Alcohol Types", 
+       y = "Average Consumption", 
+       title = "What Is Their Favorite?")
 ```
 
 2. Reproduce plot and hopefully, extra credit (hooray!)
@@ -308,6 +327,11 @@ f %>%
   geom_col(position = "fill", color = "white", alpha = 0.9, width = 1)+
   theme_minimal()+
   coord_flip(expand = FALSE)+
-  labs(x = "Top Countries", y = "Proportion of Alcohol Consumed", title = "Alcohol Consumption by Type", subtitle = "Top 25 countries displayed (according to total liters consumed)")
+  labs(x = "Top Countries", 
+       y = "Proportion of Alcohol Consumed", 
+       title = "Alcohol Consumption by Type", 
+       subtitle = "Top 25 countries displayed (according to total liters consumed)")
+
+# This is great! We'll call it close enough and you can have the extra point.
 ```
 
